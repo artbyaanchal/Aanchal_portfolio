@@ -1,0 +1,13 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Dot wrap">
+<circle id="Glow" cx="20" cy="20" r="20" fill="url(#paint0_radial_0_421)"/>
+<circle id="Dot" cx="20" cy="20" r="9" fill="#F7893B"/>
+</g>
+<defs>
+<radialGradient id="paint0_radial_0_421" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(20 20) scale(20)">
+<stop stop-color="#F7893B" stop-opacity="0.85"/>
+<stop offset="0.55" stop-color="#F7893B" stop-opacity="0.35"/>
+<stop offset="1" stop-color="#F7893B" stop-opacity="0"/>
+</radialGradient>
+</defs>
+</svg>
