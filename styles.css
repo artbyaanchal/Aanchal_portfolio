@@ -10,7 +10,9 @@
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; }
+html { scroll-behavior: smooth; scrollbar-width: none; }
+/* The page still scrolls; only the scrollbar is hidden. */
+html::-webkit-scrollbar { display: none; }
 body {
   background: var(--white);
   color: var(--ink);
@@ -336,7 +338,7 @@ section { scroll-margin-top: 110px; }
   transition: background .2s, transform .15s;
 }
 .social:hover { background: var(--peach); transform: translateY(-2px); }
-.envelope { position: relative; width: 320px; height: 250px; flex-shrink: 0; }
+.envelope { position: relative; display: block; width: 320px; height: 250px; flex-shrink: 0; cursor: pointer; }
 .envelope img { position: absolute; left: 38px; top: 20px; transition: transform .3s ease; }
 .letter-card:hover .envelope img { transform: translateY(-6px) rotate(-3deg); }
 
@@ -414,6 +416,161 @@ body.modal-open { overflow: hidden; }
   border: 2px solid var(--ink); border-radius: 16px; overflow: hidden; background: var(--white);
 }
 .award-photo img { width: 100%; height: 100%; object-fit: contain; }
+
+/* ---------- Phones and small tablets ----------
+   Below 860px the 1440px canvas is no longer zoomed down (see script.js);
+   every section restacks into a single column instead. */
+@media (max-width: 860px) {
+  .page { width: auto; }
+  section { scroll-margin-top: 84px; }
+
+  /* Nav */
+  .nav { padding: 12px 12px 0; }
+  .nav-pill { gap: 14px; padding: 5px 5px 5px 6px; font-size: 15px; box-shadow: 3px 3px 0 var(--ink); }
+  .logo--nav { width: 40px; height: 40px; }
+  .btn-talk { padding: 10px 16px; }
+
+  /* Hero: photo first, then the name */
+  .hero { height: auto; display: grid; justify-items: start; padding: 36px 20px 56px; }
+  .hero > * { position: static; }
+  .photo, .photo-backing {
+    grid-row: 1; grid-column: 1; justify-self: center;
+    width: min(62vw, 250px); height: min(78vw, 314px);
+    border-radius: 999px 999px 22px 22px;
+  }
+  .photo { position: relative; left: auto; top: auto; }
+  .photo-backing { transform: rotate(4deg) translate(6px, 12px); }
+  .hero-dots { position: absolute; left: auto; right: 20px; top: 28px; width: 64px; height: auto; }
+  .hero-hello { grid-row: 2; margin-top: 40px; font-size: 22px; letter-spacing: -.3px; }
+  .hero-name { grid-row: 3; font-size: clamp(76px, 25vw, 150px); line-height: 1; letter-spacing: -.03em; margin: 4px 0 16px -4px; }
+  .hero-roles { grid-row: 4; flex-wrap: wrap; gap: 8px 12px; font-size: 17px; }
+  .hero-bio { grid-row: 5; width: auto; margin-top: 16px; font-size: 17px; line-height: 27px; }
+
+  /* Skill stack: blocks become a two-column stack */
+  .skills { height: auto; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 32px 20px 24px; }
+  .skills-title, .skills-sub, .hanging, .ground { grid-column: 1 / -1; }
+  .skills-title, .skills-sub { position: static; width: auto; }
+  .skills-title { font-size: 40px; line-height: 1.1; letter-spacing: -1px; }
+  .skills-sub { font-size: 18px; line-height: 27px; margin-bottom: 8px; }
+  .crane, .cable, .hook { display: none; }
+  .hanging { position: static; width: auto; height: auto; animation: none; display: flex; justify-content: center; padding: 12px 0 10px; }
+  .block { position: static !important; width: auto !important; height: 76px; padding: 0 10px; font-size: 15px; line-height: 18px; filter: drop-shadow(4px 4px 0 var(--ink)); }
+  .block--hung { width: 70% !important; transform: rotate(-3deg); }
+  .block--wide { grid-column: 1 / -1; }
+  .ground { position: static; width: auto; height: 5px; margin-top: 4px; }
+
+  /* Section headings */
+  .section-heading h2 { font-size: 40px; line-height: 1.1; letter-spacing: -1px; white-space: normal; }
+  .section-heading p { width: auto; font-size: 18px; line-height: 27px; }
+
+  /* Case studies: cover above the text */
+  .cases { padding: 64px 20px 0; gap: 32px; }
+  .projects { gap: 56px; }
+  .project, .project--rev { flex-direction: column; align-items: stretch; gap: 20px; }
+  .cover { width: 100%; height: auto; aspect-ratio: 640 / 500; border-radius: 18px; box-shadow: 6px 6px 0 var(--ink); }
+  .project-text { width: auto; gap: 12px; }
+  .project-text h3 { font-size: 32px; line-height: 38px; letter-spacing: -.8px; }
+  .project-desc { font-size: 18px; line-height: 27px; }
+  .project-meta { font-size: 13px; letter-spacing: 1.2px; }
+  .tags { flex-wrap: wrap; gap: 8px; white-space: normal; }
+  .tag { padding: 8px 14px; font-size: 12px; letter-spacing: 1.2px; }
+  .project-cta { font-size: 16px; }
+
+  /* Journey: a vertical timeline */
+  .journey { height: auto; padding: 64px 20px 8px; display: flex; flex-direction: column; }
+  .journey-title, .journey-sub { position: static; width: auto; }
+  .journey-title { font-size: 40px; line-height: 1.1; letter-spacing: -1px; }
+  .journey-sub { font-size: 18px; line-height: 27px; margin: 12px 0 32px; }
+  .rising-path, .stop-dot, .stop-dot-wrap { display: none; }
+  .stop {
+    position: relative !important; left: auto !important; top: auto !important; width: auto;
+    display: grid; grid-template-columns: 60px 1fr; column-gap: 16px; row-gap: 4px; align-items: start;
+    padding: 0 0 32px;
+  }
+  .stop:not(:last-of-type)::before {
+    content: ""; position: absolute; left: 29px; top: 64px; bottom: 4px;
+    border-left: 2px dashed var(--orange);
+  }
+  .badge { grid-row: 1 / span 3; width: 60px; height: 60px; font-size: 15px; box-shadow: 3px 3px 0 var(--ink); }
+  .stop--current .badge { border-color: var(--orange-deep); }
+  .stop-org, .stop-role { width: auto; }
+  .stop-org { font-size: 20px; line-height: 26px; padding-top: 4px; }
+  .stop-role { font-size: 16px; line-height: 23px; }
+  .stop-date { font-size: 14px; }
+
+  /* Wall of wins: one frame at a time */
+  .wins { padding: 56px 20px 0; gap: 28px; }
+  .carousel-row { gap: 6px; }
+  .carousel-btn { width: 38px; height: 38px; }
+  .carousel-btn img { width: 100%; height: 100%; }
+  .slots { width: 236px; height: auto; }
+  .slot { zoom: .86; height: 380px; }
+  .carousel-dots { gap: 6px; flex-wrap: wrap; justify-content: center; }
+  .carousel-dot { width: 10px; height: 10px; }
+
+  /* Things I love: 2 x 2 tiles */
+  .love { padding: 64px 20px 0; gap: 28px; }
+  .hobbies { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .hobby { width: auto; height: auto; padding: 18px 10px; gap: 8px; border-radius: 20px; filter: drop-shadow(4px 4px 0 var(--ink)); }
+  .hobby:hover { transform: none; filter: drop-shadow(4px 4px 0 var(--ink)); }
+  .hobby-icon { zoom: .62; }
+  .hobby-title { font-size: 16px; }
+
+  /* Resume */
+  .resume { height: auto; padding: 56px 20px 0; }
+  .resume-card { flex-direction: column; align-items: flex-start; gap: 18px; padding: 28px 24px; border-radius: 22px; filter: drop-shadow(6px 6px 0 var(--ink)); }
+  .resume-card h2 { font-size: 34px; letter-spacing: -1px; }
+  .btn-outline { font-size: 16px; padding: 12px 22px; }
+
+  /* Connect */
+  .connect { padding: 64px 20px 56px; }
+  .letter-card { width: 100%; flex-direction: column-reverse; align-items: stretch; gap: 8px; padding: 24px 22px 28px; border-radius: 24px; filter: drop-shadow(6px 6px 0 var(--ink)); }
+  .letter-copy { gap: 14px; }
+  .letter-copy h2 { width: auto; font-size: 30px; line-height: 36px; letter-spacing: -.8px; }
+  .letter-text { width: auto; font-size: 16px; line-height: 25px; }
+  .letter-text br { display: none; }
+  .email { gap: 8px; min-width: 0; }
+  .email img { width: 24px; height: 24px; flex-shrink: 0; }
+  .email span { font-size: 16px; overflow-wrap: anywhere; }
+  .socials { flex-wrap: wrap; gap: 8px; }
+  .social { font-size: 15px; padding: 8px 14px 8px 12px; }
+  .envelope { align-self: center; width: 200px; height: 156px; }
+  .envelope img { left: 24px; top: 12px; width: 152px; height: auto; }
+
+  /* Footer */
+  .footer { flex-direction: column; align-items: flex-start; gap: 16px; padding: 22px 20px 28px; }
+  .footer-left { gap: 12px; }
+  .logo--footer { width: 52px; height: 52px; }
+
+  /* Pop-ups: fill the phone, scroll inside without a visible bar */
+  .modal { padding: 16px; }
+  .modal-card { max-height: 100%; overflow-y: auto; scrollbar-width: none; border-radius: 24px; box-shadow: 6px 6px 0 var(--ink); }
+  .modal-card::-webkit-scrollbar { display: none; }
+  .modal-close { top: 12px; right: 12px; width: 36px; height: 36px; }
+  .modal-close img { width: 100%; height: 100%; }
+  .gallery-card { width: 100%; padding: 22px 16px 20px; gap: 16px; }
+  .gallery-head { gap: 10px; align-self: stretch; padding-right: 40px; }
+  .gallery-icon { zoom: .7; }
+  .gallery-head h2 { font-size: 24px; line-height: 30px; }
+  .gallery-head p { font-size: 14px; }
+  .gallery-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .gallery-photo { width: auto !important; height: auto !important; aspect-ratio: 3 / 4; border-radius: 12px; box-shadow: 3px 3px 0 var(--ink); }
+  .award-card { width: 100%; padding: 22px 18px; gap: 10px; }
+  .award-card .modal-close { top: 12px; right: 12px; }
+  .award-badge { zoom: .72; }
+  .award-pills { flex-wrap: wrap; justify-content: center; gap: 8px; }
+  .pill { font-size: 13px; padding: 5px 12px; }
+  .award-card h2 { font-size: 22px; line-height: 28px; }
+  .award-sub { font-size: 15px; line-height: 22px; }
+  .award-photo { height: 220px; }
+}
+
+@media (max-width: 370px) {
+  .nav-pill { gap: 10px; font-size: 14px; }
+  .logo--nav { width: 34px; height: 34px; }
+  .btn-talk { padding: 9px 12px; }
+  .hobby-title { font-size: 14px; }
+}
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }

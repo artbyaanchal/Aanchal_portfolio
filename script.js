@@ -1,21 +1,23 @@
-// Scale the fixed 1440px design down to fit narrower windows.
+// Laptops and desktops: scale the fixed 1440px design down to fit the window.
+// Phones and small tablets (matching the 860px breakpoint in styles.css) get their own one-column layout.
 const DESIGN_WIDTH = 1440;
+const mobile = window.matchMedia('(max-width: 860px)');
 const page = document.querySelector('.page');
 const modal = document.getElementById('modal');
 const card = modal.querySelector('.modal-card');
 function fitPage() {
-  const scale = Math.min(1, document.documentElement.clientWidth / DESIGN_WIDTH);
+  const scale = mobile.matches ? 1 : Math.min(1, document.documentElement.clientWidth / DESIGN_WIDTH);
   page.style.zoom = scale;
   modal.style.zoom = scale;
   fitModal();
 }
 
-// Pop-ups never scroll: shrink the card until it fits inside the window.
+// On wider screens pop-ups never scroll: shrink the card until it fits inside the window.
 const MODAL_GAP = 40;
 function fitModal() {
-  if (modal.hidden) return;
-  const zoom = parseFloat(modal.style.zoom) || 1;
   card.style.transform = '';
+  if (modal.hidden || mobile.matches) return; // on phones the card scrolls inside instead
+  const zoom = parseFloat(modal.style.zoom) || 1;
   const availW = window.innerWidth / zoom - MODAL_GAP * 2;
   const availH = window.innerHeight / zoom - MODAL_GAP * 2;
   const s = Math.min(1, availW / card.offsetWidth, availH / card.offsetHeight);
@@ -72,8 +74,9 @@ const AWARDS = [
     detail: 'Poster making competition', photo: 'assets/awards/award-13.jpg' },
 ];
 
-const PER_PAGE = 4;
-const PAGES = Math.ceil(AWARDS.length / PER_PAGE);
+// Four frames per page on wide screens, one on phones.
+let PER_PAGE = mobile.matches ? 1 : 4;
+let PAGES = Math.ceil(AWARDS.length / PER_PAGE);
 // Each position on the wall hangs at its own slight angle, as in the design.
 const HANG = [{ rot: '1.5deg', y: '14px' }, { rot: '-1.2deg', y: '2px' }, { rot: '1deg', y: '14px' }, { rot: '-1.5deg', y: '1px' }];
 
@@ -84,7 +87,7 @@ let current = 0;
 function renderPage() {
   const items = AWARDS.slice(current * PER_PAGE, current * PER_PAGE + PER_PAGE);
   slots.innerHTML = items.map((a, i) => `
-    <button class="slot" style="--rot:${HANG[i].rot};--y:${HANG[i].y}" data-award="${current * PER_PAGE + i}" aria-haspopup="dialog">
+    <button class="slot" style="--rot:${HANG[(current * PER_PAGE + i) % 4].rot};--y:${HANG[(current * PER_PAGE + i) % 4].y}" data-award="${current * PER_PAGE + i}" aria-haspopup="dialog">
       <span class="award">
         <span class="award-art">
           <span class="award-mat"></span>
@@ -116,6 +119,15 @@ slots.addEventListener('click', (e) => {
   if (slot) openAward(AWARDS[Number(slot.dataset.award)], slot);
 });
 renderPage();
+
+mobile.addEventListener('change', () => {
+  const firstShown = current * PER_PAGE;
+  PER_PAGE = mobile.matches ? 1 : 4;
+  PAGES = Math.ceil(AWARDS.length / PER_PAGE);
+  current = Math.floor(firstShown / PER_PAGE);
+  renderPage();
+  fitPage();
+});
 
 /* ---------- Pop-ups ---------- */
 
@@ -219,3 +231,16 @@ function openHobby(key, opener) {
 
 document.querySelectorAll('[data-hobby]').forEach((btn) =>
   btn.addEventListener('click', () => openHobby(btn.dataset.hobby, btn)));
+
+/* ---------- Email ---------- */
+
+// The envelope and the address open a new email to Aanchal. Computers get Gmail's
+// compose window in a new tab (works without a mail app); phones use their mail app.
+const EMAIL = 'aanchal1069@gmail.com';
+const touchDevice = window.matchMedia('(pointer: coarse)').matches;
+document.querySelectorAll('[data-email]').forEach((link) => {
+  if (touchDevice) return; // keep mailto:
+  link.href = `https://mail.google.com/mail/?view=cm&fs=1&to=${EMAIL}`;
+  link.target = '_blank';
+  link.rel = 'noopener';
+});
